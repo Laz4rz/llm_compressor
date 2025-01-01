@@ -78,6 +78,28 @@ class Compressor:
             print(f"Decoded: {decoded_str}")
         assert text == decoded_str, f"Expected {text}, got {decoded}"
 
+    def encode_with_length_prefix(sequences):
+        encoded = ""
+        for seq in sequences:
+            length = len(seq)
+            length_prefix = f"{length:05b}"
+            encoded += length_prefix + seq
+        return encoded
+
+    def decode_with_length_prefix(encoded):
+        sequences = []
+        i = 0
+        while i < len(encoded):
+            # Read the 5-bit length prefix
+            length = int(encoded[i:i+5], 2)
+            i += 5
+            # Extract the sequence
+            sequence = encoded[i:i+length]
+            sequences.append(sequence)
+            i += length
+        return sequences
+    
+
 if __name__ == "__main__":
     compressor = Compressor()
     compressor._test(verbose=True)
